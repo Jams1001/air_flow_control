@@ -47,51 +47,14 @@ Ti2 = 1.17*T
 C3 = Kc* (( Ti2*s + 1)/(Ti2*s))
 L1 = P*C3
 
-%sisotool(C3)
-%figure(1);
-%bode(L)
-%margin(L)
-%grid on
+sisotool(C3)
+bode(L1)
+margin(L1)
+grid on
+figure(1)
 
 
 
-
-% Pruebas con controlador Chien
-
-% Vector de tiempo para respuesta de sistema simulado. NO CONFUNDIR CON
-% VECTOR DE TIEMPO utilizado para calcular parámetros
-
-t = [0:0.01:100];
-% Servocontrol
-Myr = ( C3 * P ) /(1+ C3 * P );
-% Regulador
-Myd = minreal( P /(1+ C3 * P ) ); 
-
-% F.T de la planta: Se hizo para tratar de simular la respuesta de la
-% planta, sin embargo, no se ha podido simular la respuesta de la planta.
-Myrp = ( P ) /(1+ P );
- 
-r = 0; %referencia
-r ( t >= 1) = 1;
-
-% La perturbacipón pasa de 0 a 0.5 cuando el tiempo es mayor o igual a 70.
-d = 0; %perturbacion
-d ( t >= 25) = 0;
-
-% Para simular el servocontrol
-yr = lsim ( Myr , r , t );
-% Para simular el regulador
-yd = lsim ( Myd , d , t );
-y = yr + yd;
-
-
-%figure (2) ;
-%title ('Respuesta del sistema como Servocontrol y como Regulador ') ;
-%plot (t,d,'--',t,y,t,r)
-%xlabel ('Tiempo (s)') ;
-%ylabel ('Respuesta del sistema ') ;ylabel ('Respuesta del sistema ') ;
-%legend ('d(s)','y(s)','r(s)') %leyenda
-%grid on;
 
 % Parte III: obtención de parámetros
 
@@ -100,39 +63,22 @@ y = yr + yd;
 % presenta un error debido a que la cantidad de elementos en vectores no
 % coincide.
 
+
 Myr= L1/(1+L1);
-r2=heaviside(t-1);ss
-r1 = r2*25;
-y1=lsim(Myr,r1,t);
 
-%{
-% Salida planta
-yp = lsim (Myrp , r , t )
-%}
+y1=lsim(Myr,un,tp);
 
-%yplanta = lsim(Myrp,r,t);
 
-plot(t,r1,t, y1,"LineWidth",1.5)
+plot(tp,un,tp, y1,"LineWidth",1.5)
 hold on
 grid on
 legend("entrada","y(t) ")
 title("Respuesta realimentada controlador Chien")
 xlabel("Tiempo (s)")
 ylabel("Amplitud")
-figure(1)
-hold off
-
-%{
-plot(t,r,t, yplanta,"LineWidth",1.5)
-hold on
-grid on
-legend("entrada","y(t) ")
-title("Salida de planta")
-xlabel("Tiempo (s)")
-ylabel("Amplitud")
 figure(2)
 hold off
-%}
+
 
 
 % IAE
@@ -143,9 +89,11 @@ hold off
 % Para poder calcularlo, ES NECESARIO SIMULAR LA RESPUESTA DE LA PLANTA
 % sin compensar para poder calcular el error y así poder integrarlo.
 
-SalidaPlanta= r1;
+SalidaPlanta= un;
 SalidaModelo= y1; % Obtenido con toolbox
 e_IAE=abs(SalidaPlanta-SalidaModelo);
-IAE=trapz(t,e_IAE)
+IAE=trapz(tp,e_IAE)
+
+
 
 

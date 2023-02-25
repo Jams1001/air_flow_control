@@ -1,3 +1,4 @@
+
 data = readmatrix('pruebaChien.xlsx')
 %data = readmatrix('Flujo_delta_25a50_sin_ruido.xlsx')
 
@@ -55,4 +56,8 @@ t2per1 = tn(ind2per)
 
 % IAE
 IAE = trapz(tn,abs(rn-yn))
+
+
+% Esfuerzo de control
+TVur = sum(abs(diff(un)))
 
