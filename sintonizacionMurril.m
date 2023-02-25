@@ -9,7 +9,7 @@ data = readmatrix('Flujo_delta_25a50.xlsx','Range','A377:C1471')
 %data = readmatrix('Flujo_delta_25a50.xlsx')
 
 
-t = data(:,1)-30;
+tp = data(:,1)-30;
 u = data(:,2);
 y = data(:,3);
 
@@ -39,55 +39,42 @@ P=(Kp*exp(-L*s))/(1+T*s)
 Kc = (0.928/Kp)*(L/T)^(0.946)
 Ti2 = (T/1.078)*(L/T)^(0.583)
 C3 = Kc* (( Ti2*s + 1)/(Ti2*s))
-L = P*C3
+L1 = P*C3
 
 % Murril sin compensar
-%sisotool(C3)
-%figure(1);
-%bode(L)
-%margin(L)
-%grid on
+sisotool(C3)
+figure(1);
+bode(L1)
+margin(L1)
+grid on
 
 
-% Pruebas con controlador Murril sin compensar
+Myr= L1/(1+L1);
 
-t = [0:0.01:100];
-% Servocontrol
-Myr = ( C3 * P ) /(1+ C3 * P );
-% Regulador
-Myd = minreal( P /(1+ C3 * P ) ); 
+y1=lsim(Myr,un,tp);
 
-r = 0; %referencia
-r ( t >= 1) = 1;
 
-% La perturbacipón pasa de 0 a 0.5 cuando el tiempo es mayor o igual a 70.
-d = 0; %perturbacion
-d ( t >= 25) = 0.5;
-
-% Para simular el servocontrol
-yr = lsim ( Myr , r , t );
-% Para simular el regulador
-yd = lsim ( Myd , d , t );
-y = yr + yd;
-
-figure (2) ;
-title ('Controlador diseñado con Murril') ;
-plot (t,d,'--', LineWidth=1.5)
+plot(tp,un,tp, y1,"LineWidth",1.5)
 hold on
-plot (t,y,t,r, LineWidth=1.3)
-xlabel ('Tiempo (s)') ;
-ylabel ('Respuesta del sistema ');
-legend ('d(s)','y(s)','r(s)') %leyenda
-grid on;
+grid on
+legend("entrada","y(t) ")
+title("Respuesta realimentada controlador Chien")
+xlabel("Tiempo (s)")
+ylabel("Amplitud")
+figure(2)
+hold off
 
 
 
-% Criterio IAE
+% IAE
 
-POMTM_Ho = lsim(C3,un,t);
+% Se debe tratar más debido a que el error se está calculando utilizando el
+% valor deseado, no la  salida de la planta.
 
-SalidaPlanta= yn;
-SalidaModelo_1= POMTM_Ho; % Obtenido con toolbox
-e_IAE=abs(SalidaPlanta-SalidaModelo_1);
-IAE=trapz(t,e_IAE)
+% Para poder calcularlo, ES NECESARIO SIMULAR LA RESPUESTA DE LA PLANTA
+% sin compensar para poder calcular el error y así poder integrarlo.
 
+SalidaPlanta= un;
+SalidaModelo= y1; % Obtenido con toolbox
+e_IAE=abs(SalidaPlanta-SalidaModelo);
+IAE=trapz(tp,e_IAE)
