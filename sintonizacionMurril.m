@@ -4,77 +4,58 @@ close all;
 
 % Carga de datos
 data = readmatrix('Flujo_delta_25a50.xlsx','Range','A377:C1471')
-%data = readmatrix('Flujo_delta_25a50_sin_ruido.xlsx')
 
-%data = readmatrix('Flujo_delta_25a50.xlsx')
-
-
-tp = data(:,1)-30;
+t = data(:,1);
 u = data(:,2);
 y = data(:,3);
-
 
 yn = y - mean(y(1:10));
 un = u - mean(u(1:10))
 
-%figure(1);
-%plot(t, un, 'r', t, yn, 'g');
+figure(1);
+plot(t, un, 'r', t, yn, 'g');
 
 
-s = tf("s");
+s = tf('s');
+
+
 % Datos de la plata
-%P1=(0.9058*exp(-0.11419*s))/(1+1.2637*s)
 Kp = 0.9058;
-L = 0.11419; % Td
-T = 1.2637; % Tp1
-a = 0;      % a se encuentra dentro del rango
-tao = L/T % tao se encuentra dentro del rango
+L = 0.11419;
+T = 1.2637; 
+a = 0;      
+tao = L/T 
 
+P = (Kp*exp(-L*s))/(1+T*s)
 
-% Planta
-P=(Kp*exp(-L*s))/(1+T*s)
 
 % Controlador Murril
-
 Kc = (0.928/Kp)*(L/T)^(0.946)
-Ti2 = (T/1.078)*(L/T)^(0.583)
-C3 = Kc* (( Ti2*s + 1)/(Ti2*s))
-L1 = P*C3
+Ti = (T/1.078)*(L/T)^(0.583)
+C = Kc* (( Ti*s + 1)/(Ti*s))
+L = P*C
 
 % Murril sin compensar
-sisotool(C3)
-figure(1);
-bode(L1)
-margin(L1)
-grid on
+%sisotool(C3)
+%figure(2)
+%margin(L1)
+%grid on
 
+Myr = L/(1+L)
 
-Myr= L1/(1+L1);
+yc = lsim(Myr, un, t);
 
-y1=lsim(Myr,un,tp);
-
-
-plot(tp,un,tp, y1,"LineWidth",1.5)
+figure(3)
+plot(t, un, t, yc,"LineWidth", 1.5)
 hold on
 grid on
-legend("entrada","y(t) ")
-title("Respuesta realimentada controlador Chien")
+legend('Entrada', 'Salida')
+title("Respuesta controlador Murril")
 xlabel("Tiempo (s)")
 ylabel("Amplitud")
-figure(2)
 hold off
 
 
+%IAE
+IAE = trapz(t, abs(un-yc))
 
-% IAE
-
-% Se debe tratar más debido a que el error se está calculando utilizando el
-% valor deseado, no la  salida de la planta.
-
-% Para poder calcularlo, ES NECESARIO SIMULAR LA RESPUESTA DE LA PLANTA
-% sin compensar para poder calcular el error y así poder integrarlo.
-
-SalidaPlanta= un;
-SalidaModelo= y1; % Obtenido con toolbox
-e_IAE=abs(SalidaPlanta-SalidaModelo);
-IAE=trapz(tp,e_IAE)
