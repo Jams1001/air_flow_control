@@ -42,11 +42,11 @@ C3 = Kc* (( Ti2*s + 1)/(Ti2*s))
 L = P*C3
 
 % Murril sin compensar
-sisotool(C3)
-figure(1);
-bode(L)
-margin(L)
-grid on
+%sisotool(C3)
+%figure(1);
+%bode(L)
+%margin(L)
+%grid on
 
 
 % Pruebas con controlador Murril sin compensar
@@ -62,7 +62,7 @@ r ( t >= 1) = 1;
 
 % La perturbacipón pasa de 0 a 0.5 cuando el tiempo es mayor o igual a 70.
 d = 0; %perturbacion
-d ( t >= 25) = 0;
+d ( t >= 25) = 0.5;
 
 % Para simular el servocontrol
 yr = lsim ( Myr , r , t );
@@ -71,10 +71,12 @@ yd = lsim ( Myd , d , t );
 y = yr + yd;
 
 figure (2) ;
-title ('Respuesta del sistema como Servocontrol sin compensar ') ;
-plot (t,d,'--',t,y,t,r)
+title ('Controlador diseñado con Murril') ;
+plot (t,d,'--', LineWidth=1.5)
+hold on
+plot (t,y,t,r, LineWidth=1.3)
 xlabel ('Tiempo (s)') ;
-ylabel ('Respuesta del sistema ') ;ylabel ('Respuesta del sistema ') ;
+ylabel ('Respuesta del sistema ');
 legend ('d(s)','y(s)','r(s)') %leyenda
 grid on;
 
