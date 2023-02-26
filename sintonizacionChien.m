@@ -13,7 +13,7 @@ data = readmatrix('Flujo_delta_25a50.xlsx','Range','A377:C1471')
 %data = readmatrix('Flujo_delta_25a50.xlsx')
 
 
-tp = data(:,1)-30;
+tp = data(:,1);
 u = data(:,2);
 y = data(:,3);
 
@@ -73,7 +73,7 @@ plot(tp,un,tp, y1,"LineWidth",1.5)
 hold on
 grid on
 legend("entrada","y(t) ")
-title("Respuesta realimentada controlador Chien")
+title("Respuesta de sistema controlador Chien")
 xlabel("Tiempo (s)")
 ylabel("Amplitud")
 figure(2)

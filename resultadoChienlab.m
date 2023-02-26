@@ -1,5 +1,5 @@
 
-data = readmatrix('pruebaChien.xlsx')
+data = readmatrix('pruebaChien.xlsx','Range','A1:D2188')
 %data = readmatrix('Flujo_delta_25a50_sin_ruido.xlsx')
 
 %data = readmatrix('Flujo_delta_25a50.xlsx')
@@ -18,7 +18,8 @@ un = u - mean(u(1:10));
 figure(1);
 plot(tn, rn, 'r', tn, yn, 'g',tn, un, 'b');
 xlabel ('Tiempo (s)') ;
-ylabel ('Respuesta del sistema ') ;
+ylabel ('Amplitud') ;
+title("Respuesta del sistema con datos reales ajustados - Chien ")
 legend ('r(s)','y(s)','u(s)') %leyenda
 grid on;
 
@@ -37,7 +38,7 @@ Eprem = mean(abs(rn-yn))
 [Ymax1, indymax1] = max(yn,[],'all')
 
 % Valor final de la respuesta: utilizo el promedio de los últimos 851 datos
-Yf1 = mean(yn(2556:3407))
+Yf1 = mean(yn(1337:2188))
 
 % Máximo de la señal realimentada 
 Ymax = max(abs(max(yn)),abs(min(yn)))
