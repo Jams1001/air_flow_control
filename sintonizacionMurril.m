@@ -13,7 +13,9 @@ yn = y - mean(y(1:10));
 un = u - mean(u(1:10))
 
 figure(1);
+hold on
 plot(t, un, 'r', t, yn, 'g');
+hold off
 
 
 s = tf('s');
@@ -35,18 +37,20 @@ Ti = (T/1.078)*(L/T)^(0.583)
 C = Kc* (( Ti*s + 1)/(Ti*s))
 L = P*C
 
-% Murril sin compensar
-%sisotool(C3)
-%figure(2)
-%margin(L1)
-%grid on
 
 Myr = L/(1+L)
 
 yc = lsim(Myr, un, t);
 
-figure(3)
-plot(t, un, t, yc,"LineWidth", 1.5)
+% Murril 
+%sisotool(C)
+bode(L)
+margin(L)
+grid on
+
+
+figure(2)
+plot(t, un, t, yc, "LineWidth", 1.5)
 hold on
 grid on
 legend('Entrada', 'Salida')
@@ -58,4 +62,13 @@ hold off
 
 %IAE
 IAE = trapz(t, abs(un-yc))
+
+
+%tiempo de asentamiento
+ind = find(yc > max(yc)-0.02*(max(yc)),1)-1;
+ta2 = t(ind) 
+
+M = minreal(-(C*P) / (1 + C*P));
+u = lsim(M, d, t);
+TVud = sum(abs(diff(u)))
 
