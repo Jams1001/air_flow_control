@@ -1,9 +1,5 @@
 
-data = readmatrix('pruebaChien.xlsx','Range','A1:D2188')
-%data = readmatrix('Flujo_delta_25a50_sin_ruido.xlsx')
-
-%data = readmatrix('Flujo_delta_25a50.xlsx')
-
+data = readmatrix('pruebaChien.xlsx','Range','A1:D2188');
 
 t = data(:,1);
 r = data(:,2);
@@ -53,7 +49,7 @@ ind2per = find(yn>Ymax-0.02*(Ymax),1)-1
 
 % Tiempo de asentamiento al 2%
 % Busca en el vector del tiempo el índice del dato asociado al 2%
-t2per1 = tn(ind2per)
+t2per1 = tn(ind2per) - 9.77
 
 % IAE
 IAE = trapz(tn,abs(rn-yn))
